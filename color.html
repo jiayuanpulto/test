@@ -1,0 +1,270 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<canvas id="canvasBlack" width="1160" height="400" style="border:1px solid #d3d3d3;background:#ffffff;">Your browser does not support the HTML5 canvas tag.</canvas>
+<input id="blackCircle" type="range" value="1" step="0.01" min="0" max="1" style="position:relative;left:400px;height:40px;width:360px" onchange="blackCircleChange();">
+<input id="blackRectangle" type="range" value="1" step="0.01" min="0" max="1" style="position:relative;left:400px;height:40px;width:360px" onchange="blackRectangleChange();">
+<canvas id="canvasWhite" width="1160" height="400" style="border:1px solid #d3d3d3;background:#ffffff;">Your browser does not support the HTML5 canvas tag.</canvas>
+<input id="whiteCircle" type="range" value="1" step="0.01" min="0" max="1" style="position:relative;left:400px;height:40px;width:360px" onchange="whiteCircleChange();">
+<input id="whiteRectangle" type="range" value="1" step="0.01" min="0" max="1" style="position:relative;left:400px;height:40px;width:360px" onchange="whiteRectangleChange();">
+<script type="text/javascript">
+//set canvas's imageData function
+var setData = function(imageData,x,y,value) {
+    imageData.data[((y*(imageData.width*4)) + (x*4)) + 0]=value[0]
+    imageData.data[((y*(imageData.width*4)) + (x*4)) + 1]=value[1]
+    imageData.data[((y*(imageData.width*4)) + (x*4)) + 2]=value[2]
+    imageData.data[((y*(imageData.width*4)) + (x*4)) + 3]=value[3]
+}
+//image size
+var imgLen1 = 400, half = imgLen1/2;
+
+//draw canvasBlack
+var black = document.getElementById('canvasBlack');
+var ctxBlack = black.getContext('2d');
+var blackData1 = ctxBlack.createImageData(imgLen1, imgLen1);
+for (var i=0; i<imgLen1; i++) {
+    for (var j=0; j<imgLen1; j++) {
+        var pixel = origin((i-half)/half, -(j-half)/half);
+        setData(blackData1, i, j, [
+            pixel.r,
+            pixel.g,
+            pixel.b,
+            255
+        ]);
+    }
+}
+ctxBlack.putImageData(blackData1, 0, 0);
+var blackData2 = ctxBlack.createImageData(imgLen1, imgLen1);
+for (i=0; i<imgLen1; i++) {
+    for (j=0; j<imgLen1; j++) {
+        pixel = circle((i-half)/half, -(j-half)/half, 1);
+        setData(blackData2, i, j, [
+            pixel.r,
+            pixel.g,
+            pixel.b,
+            255
+        ]);
+    }
+}
+ctxBlack.putImageData(blackData2, imgLen1, 0);
+var tmpi, tmpj, tmplen=360;
+var blackData3 = ctxBlack.createImageData(tmplen, imgLen1);
+for (i=0; i<tmplen; i++) {
+    for (j=0; j<imgLen1; j++) {
+        tmpi = ((imgLen1 - j)/imgLen1)*Math.cos(Math.PI*i/180);
+        tmpj = ((imgLen1 - j)/imgLen1)*Math.sin(Math.PI*i/180);
+        pixel = circle(tmpi, tmpj, 1);
+        setData(blackData3, i, j, [
+            pixel.r,
+            pixel.g,
+            pixel.b,
+            255
+        ]);
+    }
+}
+ctxBlack.putImageData(blackData3, imgLen1*2, 0);
+
+//draw canvasWhite
+var white = document.getElementById('canvasWhite');
+var ctxWhite = white.getContext('2d');
+var whiteData1 = ctxWhite.createImageData(imgLen1, imgLen1);
+for (i=0; i<imgLen1; i++) {
+    for (j=0; j<imgLen1; j++) {
+        pixel = origin((i-half)/half, -(j-half)/half);
+        if (!pixel.ifbg) //ifbg : if background then do not change
+            pixel.r=255-pixel.r, pixel.g=255-pixel.g, pixel.b=255-pixel.b;
+        setData(whiteData1, i, j, [
+            pixel.r,
+            pixel.g,
+            pixel.b,
+            255
+        ]);
+    }
+}
+ctxWhite.putImageData(whiteData1, 0, 0);
+var whiteData2 = ctxWhite.createImageData(imgLen1, imgLen1);
+for (i=0; i<imgLen1; i++) {
+    for (j=0; j<imgLen1; j++) {
+        pixel = circle((i-half)/half, -(j-half)/half, 1);
+        if (!pixel.ifbg)
+            pixel.r=255-pixel.r, pixel.g=255-pixel.g, pixel.b=255-pixel.b;
+        setData(whiteData2, i, j, [
+            pixel.r,
+            pixel.g,
+            pixel.b,
+            255
+        ]);
+    }
+}
+ctxWhite.putImageData(whiteData2, imgLen1, 0);
+var whiteData3 = ctxWhite.createImageData(tmplen, imgLen1);
+for (i=0; i<tmplen; i++) {
+    for (j=0; j<imgLen1; j++) {
+        tmpi = ((imgLen1 - j)/imgLen1)*Math.cos(Math.PI*i/180);
+        tmpj = ((imgLen1 - j)/imgLen1)*Math.sin(Math.PI*i/180);
+        pixel = circle(tmpi, tmpj, 1);
+        pixel.r=255-pixel.r, pixel.g=255-pixel.g, pixel.b=255-pixel.b;
+        setData(whiteData3, i, j, [
+            pixel.r,
+            pixel.g,
+            pixel.b,
+            255
+        ]);
+    }
+}
+ctxWhite.putImageData(whiteData3, imgLen1*2, 0);
+
+function blackCircleChange() {
+    var blackCircleLight = document.getElementById('blackCircle').value;
+    ctxBlack.clearRect(imgLen1, 0, imgLen1, imgLen1);
+    for (i=0; i<imgLen1; i++) {
+        for (j=0; j<imgLen1; j++) {
+            pixel = circle((i-half)/half, -(j-half)/half, blackCircleLight);
+            setData(blackData2, i, j, [
+                pixel.r,
+                pixel.g,
+                pixel.b,
+                255
+            ]);
+        }
+    }
+    ctxBlack.putImageData(blackData2, imgLen1, 0);
+}
+function whiteCircleChange() {
+    var whiteCircleLight = document.getElementById('whiteCircle').value;
+    ctxWhite.clearRect(imgLen1, 0, imgLen1, imgLen1);
+    for (i=0; i<imgLen1; i++) {
+        for (j=0; j<imgLen1; j++) {
+            pixel = circle((i-half)/half, -(j-half)/half, whiteCircleLight);
+            if (!pixel.ifbg)
+                pixel.r=255-pixel.r, pixel.g=255-pixel.g, pixel.b=255-pixel.b;
+            setData(whiteData2, i, j, [
+                pixel.r,
+                pixel.g,
+                pixel.b,
+                255
+            ]);
+        }
+    }
+    ctxWhite.putImageData(whiteData2, imgLen1, 0);
+}
+function blackRectangleChange() {
+    var blackRectangleLight = document.getElementById('blackRectangle').value;
+    ctxBlack.clearRect(imgLen1*2, 0, imgLen1, imgLen1);
+    for (i=0; i<tmplen; i++) {
+        for (j=0; j<imgLen1; j++) {
+            tmpi = ((imgLen1 - j)/imgLen1)*Math.cos(Math.PI*i/180);
+            tmpj = ((imgLen1 - j)/imgLen1)*Math.sin(Math.PI*i/180);
+            pixel = circle(tmpi, tmpj, blackRectangleLight);
+            setData(blackData3, i, j, [
+                pixel.r,
+                pixel.g,
+                pixel.b,
+                255
+            ]);
+        }
+    }
+    ctxBlack.putImageData(blackData3, imgLen1*2, 0);
+}
+function whiteRectangleChange() {
+    var whiteRectangleLight = document.getElementById('whiteRectangle').value;
+    ctxWhite.clearRect(imgLen1*2, 0, imgLen1, imgLen1);
+    for (i=0; i<tmplen; i++) {
+        for (j=0; j<imgLen1; j++) {
+            tmpi = ((imgLen1 - j)/imgLen1)*Math.cos(Math.PI*i/180);
+            tmpj = ((imgLen1 - j)/imgLen1)*Math.sin(Math.PI*i/180);
+            pixel = circle(tmpi, tmpj, whiteRectangleLight);
+            pixel.r=255-pixel.r, pixel.g=255-pixel.g, pixel.b=255-pixel.b;
+            setData(whiteData3, i, j, [
+                pixel.r,
+                pixel.g,
+                pixel.b,
+                255
+            ]);
+        }
+    }
+    ctxWhite.putImageData(whiteData3, imgLen1*2, 0);
+}
+function origin(x,y){
+    var r,g,b;
+    if (x==0 && y==0) {
+        return {
+            r:0,
+            g:0,
+            b:0,
+            ifbg:0
+        };
+    }
+    if (x<0 && y<0) {
+        return {
+            r:255,
+            g:255,
+            b:255,
+            ifbg:1
+        };
+    }
+    if (x>0 && y>0)
+        r=x, g=y, b=0;
+    if (x<=0 && y>=0)
+        r=0, g=y, b=-x;
+    if (x>=0 && y<=0)
+        r=x, g=0, b=-y;
+    return {
+        r:parseInt(r*255),
+        g:parseInt(g*255),
+        b:parseInt(b*255),
+        ifbg:0
+    };
+}
+function circle(x,y,m){
+    var f,p,q,t;
+    var r,g,b;
+    if ((x*x+y*y) > 1) { //the point outside the circle
+        return {
+            r:255,
+            g:255,
+            b:255,
+            ifbg:1
+        };
+    }
+    if (x>0)
+        p = Math.atan(y/x);
+    if (x<0)
+        p = Math.PI + Math.atan(y/x);
+    if (x==0 && y>0)
+        p = Math.PI/2;
+    if (x==0 && y<0)
+        p= -Math.PI/2;
+    if (x==0 && y==0) { //the circle's center
+        return {
+            r:(1-m)*255,
+            g:(1-m)*255,
+            b:(1-m)*255,
+            ifbg:0
+        };
+    }
+    q = Math.sqrt(x*x+y*y);
+    t = p*3/4-Math.PI/8;
+    f = t/Math.PI;
+    if (f>=0.75)
+        r = 0, b = q, g = Math.abs(q*Math.tan(t));
+    if (f>=0.5 && f<0.75)
+        r = 0, b = Math.abs(q*Math.tan(t-Math.PI/2)), g = q;   
+    if (f>=0.25 && f<0.5)
+        r = Math.abs(q*Math.tan(Math.PI/2-t)), b = 0, g = q;   
+    if (f>=0 && f<0.25)
+        r = q, b = 0, g = Math.abs(q*Math.tan(t)); 
+    if (f>=-0.25 && f<0)
+        r = q, b = Math.abs(q*Math.tan(t)), g = 0; 
+    if (f<-0.25)
+        r = Math.abs(q*Math.tan(t+Math.PI/2)), b = q, g = 0;
+    return {
+        r:parseInt(255*(r*m+1-m)),
+        g:parseInt(255*(g*m+1-m)),
+        b:parseInt(255*(b*m+1-m)),
+        ifbg:0
+    };
+}
+</script>
+</body>
+</html>

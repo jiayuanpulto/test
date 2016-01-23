@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>flex-basis+box-sizing</title>
+<style type="text/css">
+.main, .one, .two, .three {display:flex; flex-direction:row;}
+.main {width:400px; height:400px;}
+.flex_part {flex:0 0 33.33%; background-color:#000; border-top: 20px solid red; border-right: 20px solid red; box-sizing:border-box;}
+.one {width:66.66%; height:100%; flex-direction:column;}
+.big {flex:0 0 66.66%; border-top:0 none;}
+.two {width:100%; height:33.33%;}
+.two .flex_part {flex:0 0 50%;}
+.three {width:33.33%; height:100%; flex-direction:column;}
+.three .flex_part:nth-child(1) {border-top:0 none;}
+.three .flex_part {border-right:0 none;}
+</style>
+</head>
+<body>
+    <div class="main">
+        <div class="one">
+            <div class="flex_part big"></div>
+            <div class="two">
+                <div class="flex_part"></div>
+                <div class="flex_part"></div>
+            </div>
+        </div>
+        <div class="three">
+            <div class="flex_part"></div>
+            <div class="flex_part"></div>
+            <div class="flex_part"></div>
+        </div>
+    </div>
+</body>
+</html>

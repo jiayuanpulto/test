@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>flex</title>
+<style type="text/css">
+.main, .row, .coloum {display:flex; flex-direction:column; flex:1.0;}
+.main {width:400px; height:400px;}
+.flex_part {flex:1.0; background-color:#000; border-top:20px solid red; border-right:20px solid red;}
+.big {flex:2.0; border-top:0 none;}
+.row {flex-direction:row;}
+.row:nth-child(1) {flex:2.0;}
+.coloum .flex_part:nth-child(1) {border-top:0 none;}
+.coloum .flex_part, .row .flex_part:nth-child(3) {border-right:0 none;}
+</style>
+</head>
+<body>
+    <div class="main">
+        <div class="row">
+            <div class="flex_part big"></div>
+            <div class="coloum">
+                <div class="flex_part"></div>
+                <div class="flex_part"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="flex_part"></div>
+            <div class="flex_part"></div>
+            <div class="flex_part"></div>
+        </div>
+    </div>
+</body>
+</html>
